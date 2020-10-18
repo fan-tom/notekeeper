@@ -1,4 +1,4 @@
-from core.Note import Note
+from core.note import Note
 from core.commands import Push, Top, PushHandler, TopHandler
 from core.interfaces import NoteRepo, CommandsProcessor
 

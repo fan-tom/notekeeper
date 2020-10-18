@@ -1,8 +1,8 @@
 from abc import ABC
 from typing import Generic
 
-from core.Note import UserId
-from .Command import Command, Handler
+from core.note import UserId
+from .command import Command, Handler
 
 
 class AuthorizedCommand(ABC, Generic[Handler], Command[Handler]):

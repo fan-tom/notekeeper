@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 
-from .Command import Command
+from .command import Command
 
 
 class CommandsProcessor(ABC):

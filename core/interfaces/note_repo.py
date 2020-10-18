@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from core.Note import UserId, Note
+from core.note import UserId, Note
 
 
 class NoteRepo(ABC):

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
-from core.Note import UserId, Note
+from core.note import UserId, Note
 from core.interfaces import AuthorizedCommand
 
 

@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 
-from core.Note import NoteId, UserId
+from core.note import NoteId, UserId
 from core.interfaces import AuthorizedCommand
 
 
