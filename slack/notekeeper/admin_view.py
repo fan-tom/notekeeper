@@ -41,4 +41,17 @@ def get_top_used_words_per_period(request: Request) -> Response:
         n = int(n_str)
     except ValueError:
         raise ValidationError(f'Invalid number of words: expected integer, found {n_str}')
-    return Response(dict(top_used_words=NoteModel.top_used_words(from_date, to_date, n)))
+    query = NoteModel.objects
+    if from_date is not None and to_date is not None:
+        query = query.filter(created_at__range=(from_date, to_date))
+    elif from_date is not None:
+        query = query.filter(created_at__gt=from_date)
+    elif to_date is not None:
+        query = query.filter(created_at__lt=to_date)
+    else:
+        # no filtration required
+        pass
+    return Response(dict(top_used_words=map(lambda r: (r.word, r.nentry), query
+                                            .top_used_words()
+                                            .order_by('-nentry', '-ndoc')[:n]
+                                            )))
