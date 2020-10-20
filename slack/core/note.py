@@ -3,7 +3,7 @@ from typing import NewType
 from uuid import UUID
 
 NoteId = NewType('NoteId', UUID)
-UserId = NewType('UserId', UUID)
+UserId = NewType('UserId', str)
 
 
 class Note:

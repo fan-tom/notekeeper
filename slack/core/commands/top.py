@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, List
 
 from core.note import UserId, Note
-from core.interfaces import AuthorizedCommand
+from core.interfaces import IdentifiedCommand
 
 
 class TopHandler(ABC):
@@ -11,7 +11,10 @@ class TopHandler(ABC):
         pass
 
 
-class Top(AuthorizedCommand[TopHandler]):
+class Top(IdentifiedCommand[TopHandler]):
+    """
+    Get last notes (one by default)
+    """
     name = 'top'
     n: int
 
@@ -19,5 +22,5 @@ class Top(AuthorizedCommand[TopHandler]):
         super().__init__(user_id)
         self.n = 1 if n is None else n
 
-    def handle(self, handler: TopHandler):
-        handler.handle_top(self)
+    def handle(self, handler: TopHandler) -> List[Note]:
+        return handler.handle_top(self)

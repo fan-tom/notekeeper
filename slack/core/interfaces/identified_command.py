@@ -5,7 +5,7 @@ from core.note import UserId
 from .command import Command, Handler
 
 
-class AuthorizedCommand(ABC, Generic[Handler], Command[Handler]):
+class IdentifiedCommand(Command[Handler], ABC, Generic[Handler]):
     user_id: UserId
 
     def __init__(self, user_id: UserId):
