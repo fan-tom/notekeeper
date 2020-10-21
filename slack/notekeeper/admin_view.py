@@ -22,12 +22,15 @@ def get_notes_number_per_period(request: Request, user_id: Optional[UserId] = No
     serializer = DateTimeRangeSerializer(data=request.query_params)
     serializer.is_valid(raise_exception=True)
     from_date, to_date = serializer.validated_data.get('from_date'), serializer.validated_data.get('to_date')
-    if from_date is None:
-        notes_qs = NoteModel.objects.filter(created_at__lt=to_date)
-    else:
-        notes_qs = NoteModel.objects.filter(created_at__range=(from_date, to_date))
+    notes_qs = NoteModel.objects
     if user_id is not None:
         notes_qs = notes_qs.filter(user_id=user_id)
+    if from_date is not None and to_date is not None:
+        notes_qs = notes_qs.filter(created_at__range=(from_date, to_date))
+    elif from_date is not None:
+        notes_qs = notes_qs.filter(created_at__gte=from_date)
+    elif to_date is not None:
+        notes_qs = notes_qs.filter(created_at__lte=to_date)
     return Response(dict(notes_number=notes_qs.count()))
 
 
