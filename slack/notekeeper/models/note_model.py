@@ -24,9 +24,9 @@ class NoteQuerySet(models.QuerySet):
 
 class NoteModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user_id = models.CharField(max_length=11, editable=False)
+    user_id = models.CharField(max_length=128, editable=False)
     text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     objects = NoteQuerySet.as_manager()
 
