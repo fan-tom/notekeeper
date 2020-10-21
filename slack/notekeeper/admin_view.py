@@ -56,5 +56,5 @@ def get_top_used_words_per_period(request: Request) -> Response:
         pass
     return Response(dict(top_used_words=map(lambda r: (r.word, r.nentry), query
                                             .top_used_words()
-                                            .order_by('-nentry', '-ndoc')[:n]
+                                            .order_by('-nentry', 'word')[:n]
                                             )))
