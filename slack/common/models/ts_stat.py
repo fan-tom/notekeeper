@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from django.db import models
-from .table_functions.table_function import TableFunctionArg, TableFunctionManager
+from common.db_functions.table_functions import TableFunctionArg, TableFunctionManager
 
 
 class TsStatModel(models.Model):

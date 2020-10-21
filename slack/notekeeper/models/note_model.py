@@ -2,9 +2,10 @@ import uuid
 
 from django.db import models, connection
 from django.db.models import Func, QuerySet
+from django.utils import timezone
 
 from core.note import Note
-from common.db_functions import TsStatModel
+from common.models import TsStatModel
 
 
 class NoteQuerySet(models.QuerySet):
