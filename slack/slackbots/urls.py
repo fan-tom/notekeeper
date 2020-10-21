@@ -13,18 +13,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# from django.contrib import admin
 from django.urls import path, include
 
-from core.commands import Top, Push
-from core.processors import NoteKeeper
 from common.Router import Router
 from common.views import SlackHook
+from core.commands import Push, Top
+from core.processors import NoteKeeper
 from notekeeper.note_repo_impl import NoteRepoImpl
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
     # TODO: probably, it is wrong place to configure router and command processor
-    path('slackhook/', SlackHook.as_view(router=Router(dict(notekeeper=NoteKeeper(NoteRepoImpl())), dict(push=Push, top=Top)))),
+    path('slackhook/', SlackHook.as_view(router=Router(
+        dict(notekeeper=NoteKeeper(NoteRepoImpl())),
+        dict(push=Push, top=Top)
+    ))),
     path('notekeeper/', include('notekeeper.urls'))
 ]
