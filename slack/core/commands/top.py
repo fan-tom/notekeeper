@@ -13,7 +13,7 @@ class TopHandler(ABC):
 
 class Top(IdentifiedCommand[TopHandler]):
     """
-    Get last notes (one by default)
+    Get n last notes (one if limit not specified)
     """
     name = 'top'
     n: int

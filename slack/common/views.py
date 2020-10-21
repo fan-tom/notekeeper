@@ -48,7 +48,7 @@ class SlackHook(GenericAPIView):
                 else:
                     return f"Bot {bot_name} doesn't support command {cmd_name}"
             else:
-                return f"{bot.__doc__}\nSupported commands: {command_names}"
+                return f"{bot.__doc__}\nSupported commands: {', '.join(command_names)}\nSend `{bot_name} help <command>` to get command description"
         else:
             if len(supported_commands) > 0:
                 if cmd_name == 'push':
