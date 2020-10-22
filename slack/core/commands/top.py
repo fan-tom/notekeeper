@@ -6,17 +6,19 @@ from core.interfaces import IdentifiedCommand
 
 
 class TopHandler(ABC):
+    """
+    Top command executor interface
+    """
+
     @abstractmethod
     def handle_top(self, command: 'Top') -> List[Note]:
         pass
 
 
 class Top(IdentifiedCommand[TopHandler]):
-    """
-    Get n last notes (one if limit not specified)
-    """
-    name = 'top'
-    n: int
+    """Get n last notes (one if limit not specified)"""
+
+    n: int  # List limit
 
     def __init__(self, user_id: UserId, n: Optional[int]):
         super().__init__(user_id)

@@ -9,6 +9,7 @@ class NoteKeeper(CommandsProcessor, PushHandler, TopHandler):
     """
     Can create and list last stored notes
     """
+
     repo: NoteRepo
 
     def __init__(self, repo: NoteRepo):

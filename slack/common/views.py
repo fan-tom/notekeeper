@@ -66,7 +66,7 @@ class SlackHook(GenericAPIView):
                 return f"Bot {bot_name} doesn't support command {cmd_name}, only {supported_commands_names}"
 
     def post(self, request: Request):
-        form: HookSerializer = self.get_serializer(data=request.data)
+        form = self.get_serializer(data=request.data)
         if form.is_valid():
             if not self.__validate_token(form.validated_data.get('token')):
                 return response('Invalid auth token')

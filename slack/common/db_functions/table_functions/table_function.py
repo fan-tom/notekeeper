@@ -41,7 +41,7 @@ class TableFunctionJoin(Join):
                  join_field, nullable, filtered_relation=None, table_function_params: List[Any] = None):
         super().__init__(table_name, parent_alias, table_alias, join_type,
                          join_field, nullable, filtered_relation)
-        self.table_function_params = table_function_params  # type: List[Any]
+        self.table_function_params = table_function_params
 
     def as_sql(self, compiler, connection):
         sql, params = super().as_sql(compiler, connection)
