@@ -1,16 +1,17 @@
 from typing import List, Optional, Iterable, Type
 
+from django.conf import settings
 from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import FormParser
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from core.commands import Push, Top
 from core.interfaces import Command
-from core.note import UserId
-from common import Router
+from core.entities import UserId
+from common.router import Router
 from common.serializers import HookSerializer
-from django.conf import settings
+
+from notekeeper.commands_deserializers.deserialize_exception import DeserializeException
 
 
 def response(text: Optional[str]) -> Response:
@@ -21,6 +22,7 @@ class SlackHook(GenericAPIView):
     """
     Slack hook handler view
     """
+
     parser_classes = [FormParser]
     serializer_class = HookSerializer
 
@@ -32,7 +34,7 @@ class SlackHook(GenericAPIView):
 
     def __get_commands_names(self, commands: Iterable[Type[Command]]) -> List[str]:
         """Returns names of passed command classes, as they are accepted by this view"""
-        return list(map(lambda v: v[1], filter(lambda v: v[1] is not None, self.router.get_command_names(commands).items())))
+        return list((v for v in self.router.get_command_names(commands).values() if v is not None))
 
     def __handle_cmd(self, user_id: UserId, bot_name: str, cmd_name: Optional[str], rest: Optional[str]) -> Optional[str]:
         bot = self.router.get_bot(bot_name)
@@ -40,6 +42,7 @@ class SlackHook(GenericAPIView):
             return f"No such bot: {bot_name}, mention one of these bots: {self.router.get_bot_names()}"
         supported_commands = bot.get_supported_commands()
         command_names = self.__get_commands_names(supported_commands)
+        supported_commands_names = ', '.join(command_names)
         if cmd_name == 'help':
             if rest is not None:
                 if rest in command_names:
@@ -48,31 +51,20 @@ class SlackHook(GenericAPIView):
                 else:
                     return f"Bot {bot_name} doesn't support command {cmd_name}"
             else:
-                return f"{bot.__doc__}\nSupported commands: {', '.join(command_names)}\nSend `{bot_name} help <command>` to get command description"
+                return f"{bot.__doc__}\nSupported commands: {supported_commands_names}\nSend `{bot_name} help <command>` to get command description"
         else:
-            if len(supported_commands) > 0:
-                if cmd_name == 'push':
-                    if rest is None:
-                        return f"Command '{cmd_name}' requires note text"
-                    note = Push(user_id, rest).handle(bot)
-                    return f"Note was saved with id {note.id}"
-                elif cmd_name == 'top':
-                    if rest is None:
-                        n = None
-                    else:
-                        try:
-                            n = int(rest)
-                        except ValueError:
-                            return f"Command '{cmd_name}' accepts numeric argument, got {rest}"
-                    notes = Top(user_id, n).handle(bot)
-                    content = '\n\n'.join(map(lambda note: f"Id: {note.id}\nCreated at: {note.created_at}\nText: {note.text}", notes))
-                    return f"Last {'note' if n is None else f'{len(notes)} notes'}:\n\n{content}"
-                else:
-                    return f"Bot {bot_name} doesn't support command {cmd_name}, only {command_names}"
-            elif cmd_name is not None:
-                return f"Bot {bot_name} doesn't support any command"
+            wrapper = self.router.create_wrapper(cmd_name, user_id)
+            if wrapper is None:
+                return f"Unknown command {cmd_name}, use one of these: {supported_commands_names}"
+            if wrapper.command_class in supported_commands:
+                try:
+                    cmd = wrapper.deserialize(rest)
+                except DeserializeException as e:
+                    return f"Cannot process command {cmd_name}: {e.description}"
+                res = cmd.handle(bot)
+                return wrapper.serialize(res)
             else:
-                return f"Bot {bot_name} doesn't support any command and no command was provided'"
+                return f"Bot {bot_name} doesn't support command {cmd_name}, only {supported_commands_names}"
 
     def post(self, request: Request):
         form: HookSerializer = self.get_serializer(data=request.data)

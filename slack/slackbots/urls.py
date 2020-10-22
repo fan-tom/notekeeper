@@ -15,17 +15,17 @@ Including another URLconf
 """
 from django.urls import path, include
 
-from common.Router import Router
+from common.router import Router
 from common.views import SlackHook
-from core.commands import Push, Top
 from core.processors import NoteKeeper
+from notekeeper.commands_deserializers import TopWrapper, PushWrapper
 from notekeeper.note_repo_impl import NoteRepoImpl
 
 urlpatterns = [
     # TODO: probably, it is wrong place to configure router and command processor
     path('slackhook/', SlackHook.as_view(router=Router(
         dict(notekeeper=NoteKeeper(NoteRepoImpl())),
-        dict(push=Push, top=Top)
+        dict(push=PushWrapper, top=TopWrapper)
     ))),
     path('notekeeper/', include('notekeeper.urls'))
 ]
