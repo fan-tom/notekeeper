@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Generic
 
-from core.note import UserId
+from core.entities import UserId
 from .command import Command, Handler
 
 

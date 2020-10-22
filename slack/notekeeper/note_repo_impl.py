@@ -1,7 +1,7 @@
 from typing import List
 
 from core.interfaces import NoteRepo
-from core.note import UserId, Note
+from core.entities import UserId, Note
 from notekeeper.models import NoteModel
 
 

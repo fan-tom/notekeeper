@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from core.note import UserId
+from core.entities import UserId
 from common.serializers import DateTimeRangeSerializer
 from .models import NoteModel
 

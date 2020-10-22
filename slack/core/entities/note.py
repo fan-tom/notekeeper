@@ -9,6 +9,7 @@ UserId = NewType('UserId', str)
 class Note:
     """
     Class, that represents saved note, belonging to some user
+
     Attributes
     ----------
     id: note identifier

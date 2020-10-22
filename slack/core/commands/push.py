@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 
-from core.note import UserId, Note
+from core.entities.note import UserId, Note
 from core.interfaces import IdentifiedCommand
 
 

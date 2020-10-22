@@ -1,6 +1,6 @@
 from typing import Tuple, Type, List
 
-from core.note import Note
+from core.entities import Note
 from core.commands import Push, Top, PushHandler, TopHandler
 from core.interfaces import NoteRepo, CommandsProcessor
 

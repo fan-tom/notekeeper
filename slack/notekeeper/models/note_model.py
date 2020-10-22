@@ -4,7 +4,7 @@ from django.db import models, connection
 from django.db.models import Func, QuerySet
 from django.utils import timezone
 
-from core.note import Note
+from core.entities import Note
 from common.models import TsStatModel
 
 
