@@ -8,6 +8,7 @@ class NoteRepo(ABC):
     """
     Note repository interface
     """
+
     @abstractmethod
     def create(self, user_id: UserId, text: str) -> Note:
         """
