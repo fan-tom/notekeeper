@@ -17,7 +17,6 @@ class NoteQuerySet(models.QuerySet):
         (query, params) = query_str.query.sql_with_params()
         cursor = connection.cursor()
         str_query = cursor.mogrify(query, params).decode()
-        print(f'Ts vector query: <{str_query}>')
 
         return TsStatModel.objects.all().table_function(query=str_query)
 

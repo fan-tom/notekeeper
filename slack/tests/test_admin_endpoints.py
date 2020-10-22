@@ -56,7 +56,6 @@ class AdminEndpointsTest(TestCase):
         response = self.client.get(reverse('notes_number'))
         self.assertEqual(response.status_code, 200)
         json = response.json()
-        print(json)
         self.assertEqual(json["notes_number"], len(self.notes))
 
     def test_get_notes_number_per_period_by_user_only(self):
@@ -65,7 +64,6 @@ class AdminEndpointsTest(TestCase):
         response = self.client.get(reverse('notes_number', args=[user_id]))
         self.assertEqual(response.status_code, 200)
         json = response.json()
-        print(json)
         self.assertEqual(json["notes_number"], expected)
 
     def test_get_notes_number_per_period_by_user_and_start_time(self):
@@ -75,18 +73,15 @@ class AdminEndpointsTest(TestCase):
         response = self.client.get(reverse('notes_number', args=[user_id]), data=dict(from_date={from_date.isoformat()}))
         self.assertEqual(response.status_code, 200)
         json = response.json()
-        print(json)
         self.assertEqual(json["notes_number"], expected)
 
     def test_get_notes_number_per_period_by_user_and_end_time(self):
         user_id = self.notes[0].user_id
         to_date = sorted(self.filter_notes(user_id), key=lambda n: n.created_at)[-1].created_at
         expected = sum(1 for _ in self.filter_notes(user_id, None, to_date))
-        print(f'expected {expected}')
         response = self.client.get(reverse('notes_number', args=[user_id]), data=dict(to_date={to_date.isoformat()}))
         self.assertEqual(response.status_code, 200)
         json = response.json()
-        print(json)
         self.assertEqual(json["notes_number"], expected)
 
     def test_get_top_used_words_without_filters(self):
@@ -94,7 +89,6 @@ class AdminEndpointsTest(TestCase):
         response = self.client.get(reverse('top_used_words'))
         self.assertEqual(response.status_code, 200)
         json = response.json()
-        print(json)
         self.assertEqual(json["top_used_words"], expected)
 
     def test_get_top_used_words_limiting_number(self):
@@ -103,7 +97,6 @@ class AdminEndpointsTest(TestCase):
         response = self.client.get(reverse('top_used_words'), data=dict(n=n))
         self.assertEqual(response.status_code, 200)
         json = response.json()
-        print(json)
         self.assertEqual(json["top_used_words"], expected)
 
     def test_get_top_used_words_limiting_period(self):
@@ -114,5 +107,4 @@ class AdminEndpointsTest(TestCase):
         response = self.client.get(reverse('top_used_words'), data=dict(from_date=from_date.isoformat(), to_date=to_date.isoformat()))
         self.assertEqual(response.status_code, 200)
         json = response.json()
-        print(json)
         self.assertEqual(json["top_used_words"], expected)

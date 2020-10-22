@@ -29,7 +29,6 @@ class SlackHook(GenericAPIView):
     router: Router = None
 
     def __validate_token(self, token: str) -> bool:
-        print(f'validating token: {token}')
         return token == settings.SLACK_TOKEN
 
     def __get_commands_names(self, commands: Iterable[Type[Command]]) -> List[str]:
@@ -73,14 +72,12 @@ class SlackHook(GenericAPIView):
                 return response('Invalid auth token')
             user_id = form.validated_data.get('user_id')
             # try to split into bot name, command name and the rest
-            splitted: List[str] = form.validated_data.get('text').split(' ', 2)
+            splitted = form.validated_data.get('text').split(' ', 2)
             if len(splitted) < 2:
                 # TODO: enhance message
                 return response(f"You didn't provide command. Send '<botname> help' to get bot description")
             [bot_name, cmd_name] = splitted[0:2]
-            print(f"Handling: {bot_name}:{cmd_name}")
             res = self.__handle_cmd(user_id, bot_name, cmd_name, None if len(splitted) < 3 else splitted[2])
-            print(f"Command processing result: {res}")
             if res is not None:
                 return response(res)
             else:
