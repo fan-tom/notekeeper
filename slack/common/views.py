@@ -11,10 +11,10 @@ from core.entities import UserId
 from common.router import Router
 from common.serializers import HookSerializer
 
-from notekeeper.commands_deserializers.deserialize_exception import DeserializeException
+from notekeeper.commands_deserializers import DeserializeException
 
 
-def response(text: Optional[str]) -> Response:
+def response(text: Optional[str] = None) -> Response:
     return Response() if text is None else Response(dict(text=text))
 
 
@@ -69,7 +69,7 @@ class SlackHook(GenericAPIView):
         form = self.get_serializer(data=request.data)
         if form.is_valid():
             if not self.__validate_token(form.validated_data.get('token')):
-                return response('Invalid auth token')
+                return response()
             user_id = form.validated_data.get('user_id')
             # try to split into bot name, command name and the rest
             splitted = form.validated_data.get('text').split(' ', 2)
