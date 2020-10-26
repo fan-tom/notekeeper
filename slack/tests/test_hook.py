@@ -51,6 +51,8 @@ class HookTest(APITestCase):
                     text=text,
                     trigger_word='notekeeper'
                 ),
+
+            # REVIEW M1ha: А не проще было использовать format='json'? Или задать в settings default_renderer.
             format=UrlencodedRenderer.format,
         )
 
@@ -100,6 +102,9 @@ class HookTest(APITestCase):
 
         response = self.call_hook('Utest_user_1', 'notekeeper top 2')
         self.assertEqual(response.status_code, 200)
+        # REVIEW M1ha: Нечетабельно. Python очень суров к отсутпам. Это ломает все паттерны...
+        #  Если ты хочешь сделать многострочку, либо делать через много строк (если между ними нет знаков, они конкатенируются)
+        #  Либо вынести куда-нибудь в отдельную константу на верхнем уровне. Но не такой треш...
         self.assertRegex(response.json()['text'], fr"""Last 2 notes:
 
 Id: {message_id_3}
@@ -135,6 +140,10 @@ Text: {note_2}""")
 
         response = self.call_hook('Utest_user_1', 'notekeeper top 2')
         self.assertEqual(response.status_code, 200)
+
+        # REVIEW M1ha: Нечетабельно. Python очень суров к отсутпам. Это ломает все паттерны...
+        #  Если ты хочешь сделать многострочку, либо делать через много строк (если между ними нет знаков, они конкатенируются)
+        #  Либо вынести куда-нибудь в отдельную константу на верхнем уровне. Но не такой треш...
         self.assertRegex(response.json()['text'], fr"""Last 2 notes:
 
 Id: {message_id_3}

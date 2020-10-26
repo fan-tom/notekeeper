@@ -8,6 +8,7 @@ from .command_wrapper import CommandWrapper, O
 C = TypeVar('C', bound=IdentifiedCommand)
 
 
+# REVIEW M1ha: Это что? Интерфейс? Абстрактный класс? Mixin? Зачем он вообще выделен?
 class IdentifiedCommandWrapper(CommandWrapper[C, O], ABC):
     """Base class for deserialized of commands, that require user id"""
 

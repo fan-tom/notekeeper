@@ -1,4 +1,11 @@
 # stolen from here https://gist.github.com/petrprikryl/7cd765cd723c7df983de03706bf27d1a
+
+# REVIEW M1ha: Насколько я понимаю, цель вот этого всего - возможность вместо base table вставлять набор каких-то ROWS,
+#   выбранных из другой таблицы.
+#   Возникает только один вопрос: а зачем? Похоже на велосипед от незнания возможностей django.
+#   Ну и комментария "скопипасчено отсюда" недостаточно. Никакой документации там нет, копипаст частичный,
+#   Что тут вообще происходит непонятно. Чтобы разобраться, надо закапываться глубоко в код, что крайне непрактично.
+
 #############################
 # Django extending
 #############################
@@ -22,6 +29,13 @@ class TableFunctionArg:
 
 
 class TableFunction(BaseTable):
+    """
+    NOTE M1ha: формирует SQL функцию
+      table_name(table_function_params) [AS alias]
+
+    REVIEW M1ha: Зачем, если в django есть Func?
+      https://docs.djangoproject.com/en/3.1/ref/models/expressions/#func-expressions
+    """
     def __init__(self, table_name: str, alias: Optional[str], table_function_params: List[Any]):
         super().__init__(table_name, alias)
         self.table_function_params = table_function_params  # type: List[Any]
@@ -37,6 +51,14 @@ class TableFunction(BaseTable):
 
 
 class TableFunctionJoin(Join):
+    """
+    NOTE M1ha: формирует SQL для JOIN 2 таблиц.
+      join_type table_name(table_function_placeholders) table_alias ON (on_clause_sql).
+
+    REVIEW M1ha: Опять же непонятно зачем.
+      Django содержит мощный движок annotate/aggregate/select_related/prefetch_related.
+      Зачем делать свой велосипед?
+    """
     def __init__(self, table_name, parent_alias, table_alias, join_type,
                  join_field, nullable, filtered_relation=None, table_function_params: List[Any] = None):
         super().__init__(table_name, parent_alias, table_alias, join_type,
@@ -75,6 +97,11 @@ class TableFunctionJoin(Join):
 
 
 class TableFunctionParams:
+    """
+    REVIEW M1ha: это группировка параметров для передачи? Зачем?
+      Если нельзя передать как параметры, ибо это очевиднее лучше тогда уж использовать namedtuple
+      https://docs.python.org/3/library/collections.html#collections.namedtuple
+    """
     def __init__(self, level: int, join_field: ForeignObject, params: 'OrderedDict[str, Any]'):
         self.level = level  # type: int
         self.join_field = join_field  # type: ForeignObject
@@ -149,9 +176,22 @@ class TableFunctionQuery(Query):
         """
         Take user's passed params and store them in `self.table_function_params`
         to be prepared for joining.
+
+        REVIEW M1ha: формат table_function_params не понятен из описания типов и typedoc.
+          Pydoc должен говорить ЧТО и ЗАЧЕМ функция делает, а не КАК она это делает.
+          Важно внешнее поведение, а не внутренняя реализация (И - Инкапсуляция)
+
+        NOTE M1ha:
+          :param table_function_params:
+          Судя по реализации _table_function_params_to_groups, это набор kwargs в django-style
+          с двойными подчеркиваниями для relative выборок. Т. е. {'id': 1, 'relative__parent__id': 2}
         """
+        # REVIEW M1ha: Непонятно, зачем тут _. Это переменная, а не атрибут. Зачем признаки приватности?
         _table_function_params = []
         for table_lookup, param_dict in self._table_function_params_to_groups(table_function_params).items():
+            # NOTE M1ha: Тут мы получим для примера из шапки:
+            #  (table_lookup='', param_dict={'id': 1})
+            #  (table_lookup='relative__parent', param_dict={'id': 2})
             if not table_lookup:
                 level = 0
                 join_field = None
@@ -173,6 +213,7 @@ class TableFunctionQuery(Query):
             )
 
         # TODO: merge with existing?
+        # REVIEW M1ha: Да, надо бы мерджить. Это же Query, метод у QuerySet можно вызвать несколько раз подряд
         self.table_function_params = _table_function_params
 
     def _table_function_params_to_groups(self, table_function_params: Dict[str, Any]) -> Dict[str, Any]:
@@ -228,11 +269,18 @@ class TableFunctionQuerySet(QuerySet):
         self.query = query or TableFunctionQuery(self.model)
 
     def table_function(self, **table_function_params: Dict[str, Any]) -> 'TableFunctionQuerySet':
+        # M1ha: А если query взят со входа и не является TableFunctionQuery instance?
         self.query.table_function(**table_function_params)
         return self
 
 
 class TableFunctionManager(Manager):
+    """
+    M1ha: Менеджер, добавляющий table_function.
+      В современных реалиях лучше наследовать от BaseManager.from_queryset(TableFunctionQuerySet),
+      а не определять get_queryset(...)
+      Или как у тебя использовано где-то QuerySet.as_manager(), если так работает.
+    """
     def get_queryset(self) -> TableFunctionQuerySet:
         return TableFunctionQuerySet(model=self.model, using=self._db, hints=self._hints)
 

@@ -26,6 +26,9 @@ class Router:
             return wrapper.command_class
 
     def get_command_names(self, commands: Iterable[Type[Command]]) -> Dict[Type[Command], Optional[str]]:
+        # REVIEW M1ha: неэффективно
+        #  Сложная структура wrapper-ов привела к тому, что сложно искать.
+        #  Будь там обычный словарь по имени команды, было бы в разы проще.
         return dict((c, next((key for key, value in self.command_wrappers.items() if value.command_class == c), None))
                     for c in commands)
 
