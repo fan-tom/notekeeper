@@ -1,5 +1,7 @@
 from datetime import datetime
 
+# REVIEW M1ha: Почему не используется механизм fixture django? Зачем эти нестандартные костыли?
+#  https://docs.djangoproject.com/en/3.1/howto/initial-data/
 
 class FixtureNote:
     user_id: str

@@ -6,6 +6,9 @@ from common.db_functions.table_functions import TableFunctionArg, TableFunctionM
 
 class TsStatModel(models.Model):
     """
+    REVIEW M1ha: А зачем тут вообще модель? Можно было просто вернуть результат в словаре и все :thinking_face:
+      Использование ts_stat интересно, плюс за это.
+
     Model for ts_stat table function output
     See https://postgrespro.ru/docs/postgrespro/9.6/textsearch-features#textsearch-statistics
     """

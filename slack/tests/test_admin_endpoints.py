@@ -16,6 +16,8 @@ class AdminEndpointsTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        # REVIEW M1ha: Почему не используется механизм fixture django? Зачем эти нестандартные костыли?
+        #  https://docs.djangoproject.com/en/3.1/howto/initial-data/
         with open('tests/fixtures/notes.json') as fixture:
             content = fixture.read()
             notes = list(FixtureNote(**n) for n in json.loads(content))

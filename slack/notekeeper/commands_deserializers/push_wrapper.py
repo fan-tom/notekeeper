@@ -3,6 +3,10 @@ from core.entities import Note
 from .deserialize_exception import DeserializeException
 from .identified_wrapper import IdentifiedCommandWrapper
 
+# REVIEW M1ha:
+#  В моем понимании нормальный сериализатор должен преобразовывать строку в объект и обратно.
+#  Почему тут deserialize возвращает Push, а serialize - принимает Note?
+
 
 class PushWrapper(IdentifiedCommandWrapper[Push, Note]):
     """Deserialize arguments for Push command"""

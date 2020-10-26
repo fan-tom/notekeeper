@@ -5,6 +5,18 @@ from core.commands import Push, Top, PushHandler, TopHandler
 from core.interfaces import NoteRepo, CommandsProcessor
 
 
+# REVIEW M1ha: Смешались вместе кони, люди. Какой-то гаврик на верблюде...
+#  Почему оно наследутеся от CommandProcessor и от каких-то левых Handler-ов?
+#  Что вообще представляет этот класс? Если команд будет 10? 20? 1000?
+#  Гораздо проще было бы, реализуй он только CommandProcessor.
+#  Команды, реализующие интерфейс Command, лучше хранить где-то в атрибуте в словаре
+#  При необходимости доставать команду по имени и вызывать у нее handle(...). Все.
+#  -100500 лишних интерфейсов, +100500 к прозрачности кода.
+
+# REVIEW M1ha: Кроме того, если core хранит интерфейсы, почему тут лежит реализация?
+#  Логически это должно быть в notekeeper или common
+#  (хотя на данный момент я так и не понял, зачем все это вообще делить на отдельыне package)
+
 class NoteKeeper(CommandsProcessor, PushHandler, TopHandler):
     """
     Can create and list last stored notes

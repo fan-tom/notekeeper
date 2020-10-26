@@ -23,7 +23,9 @@ from notekeeper.note_repo_impl import NoteRepoImpl
 
 urlpatterns = [
     # TODO: probably, it is wrong place to configure router and command processor
+    # REVIEW M1ha: Согласен. Зачем это вообще тут?
     path('slackhook/', SlackHook.as_view(router=Router(
+        # REVIEW M1ha: Словари можно создавать проще: {'notekeeper': NoteKeeper(NoteRepoImpl())}
         dict(notekeeper=NoteKeeper(NoteRepoImpl())),
         dict(push=PushWrapper, top=TopWrapper)
     ))),

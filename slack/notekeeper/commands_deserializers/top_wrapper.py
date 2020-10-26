@@ -6,6 +6,9 @@ from .deserialize_exception import DeserializeException
 from .identified_wrapper import IdentifiedCommandWrapper
 
 
+# REVIEW M1ha:
+#  Та же фигня, что и с PushWrapper: сериализуем одно, десериализуем другое.
+
 class TopWrapper(IdentifiedCommandWrapper[Top, List[Note]]):
     """Deserialize arguments for Top command"""
 
